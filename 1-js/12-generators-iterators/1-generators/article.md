@@ -1,15 +1,15 @@
 
 # Generators
 
-Regular functions return only one, single value (or nothing).
+Las funciones regulares sólo devuelven un único valor (o nada).
 
-Generators can return ("yield") multiple values, possibly an infinite number of values, one after another, on-demand. They work great with [iterables](info:iterable), allowing to create data streams with ease.
+Los generadores pueden devolver ("rendir") múltiples valores, posiblemente un número infinito de valores, uno tras otro, a petición. Trabajan muy bien con [iterables](info:iterable), permitiendo crear flujos de datos con facilidad.
 
 ## Generator functions
 
-To create a generator, we need a special syntax construct: `function*`, so-called "generator function".
+Para crear un generador, necesitamos una construcción sintáctica especial: `function*`, llamada "función del generador".
 
-It looks like this:
+Se ve así:
 
 ```js
 function* generateSequence() {
@@ -19,22 +19,22 @@ function* generateSequence() {
 }
 ```
 
-When `generateSequence()` is called, it does not execute the code. Instead, it returns a special object, called "generator".
+Cuando `generateSequence()` se llama, no ejecuta el código. En su lugar, devuelve un objeto especial, llamado "generador".
 
 ```js
-// "generator function" creates "generator object"
+// La "función generadora" crea el "objeto generador"
 let generator = generateSequence();
 ```
 
-The `generator` object can be perceived as a "frozen function call":
+El objeto `generator` puede ser percibido como una "llamada de función congelada":
 
 ![](generateSequence-1.svg)
 
-Upon creation, the code execution is paused at the very beginning.
+Una vez creado, la ejecución del código se detiene al principio.
 
-The main method of a generator is `next()`. When called, it resumes execution till the nearest `yield <value>` statement. Then the execution pauses, and the value is returned to the outer code.
+El método principal de un generador es `next()`. Cuando se le llama, se reanuda la ejecución hasta la declaración más cercana de  `yield <value>`. Entonces la ejecución se detiene, y el valor se devuelve al código exterior.
 
-For instance, here we create the generator and get its first yielded value:
+Por ejemplo, aquí creamos el generador y obtenemos su primer valor producido:
 
 ```js run
 function* generateSequence() {
@@ -52,15 +52,15 @@ let one = generator.next();
 alert(JSON.stringify(one)); // {value: 1, done: false}
 ```
 
-The result of `next()` is always an object:
-- `value`: the yielded value.
-- `done`: `false` if the code is not finished yet, otherwise `true`.
+EL resultado de `next()` siempre es un objeto:
+- `value`: el valor producido.
+- `done`: `false` si el código no ha terminado todavía, de lo contrario `true`.
 
-As of now, we got the first value only:
+A partir de ahora, sólo tenemos el primer valor:
 
 ![](generateSequence-2.svg)
 
-Let's call `generator.next()` again. It resumes the execution and returns the next `yield`:
+Llamemos a `generator.next()` de nuevo. Entonces, se reanuda la ejecución y regresa la siguiente `yield`:
 
 ```js
 let two = generator.next();
@@ -70,8 +70,7 @@ alert(JSON.stringify(two)); // {value: 2, done: false}
 
 ![](generateSequence-3.svg)
 
-And, if we call it the third time, then the execution reaches `return` statement that finishes the function:
-
+Y, si lo llamamos la tercera vez, entonces la ejecución alcanza la declaración de `return` que termina la función:
 ```js
 let three = generator.next();
 
@@ -80,25 +79,25 @@ alert(JSON.stringify(three)); // {value: 3, *!*done: true*/!*}
 
 ![](generateSequence-4.svg)
 
-Now the generator is done. We should see it from `done:true` and process `value:3` as the final result.
+Ahora el generador está listo. Deberíamos verlo desde `done:true` y procesa `value:3` como resultado final.
 
-New calls `generator.next()` don't make sense any more. If we make them, they return the same object: `{done: true}`.
+Las nuevas llamadas `generador.next()` ya no tienen sentido. Si las hacemos, devuelven el mismo objeto: `{done: true}`.
 
-There's no way to "roll back" a generator. But we can create another one by calling `generateSequence()`.
+No hay forma de "hacer retroceder" un generador. Pero podemos crear otro llamando `generateSequence()`.
 
-So far, the most important thing to understand is that generator functions, unlike regular function, do not run the code. They serve as "generator factories". Running `function*` returns a generator, and then we ask it for values.
+Hasta ahora, lo más importante que hay que entender es que las funciones del generador, a diferencia de las funciones normales, no ejecutan el código. Sirven como "fábricas de generadores". Ejecutar una `function*` devuelve un generador, y luego le pedimos valores.
 
 ```smart header="`function* f(…)` or `function *f(…)`?"
-That's a minor religious question, both syntaxes are correct.
+Es una cuestión secundaria, ambas sintaxis son correctas..
 
-But usually the first syntax is preferred, as the star `*` denotes that it's a generator function, it describes the kind, not the name, so it should stick with the `function` keyword.
+Pero normalmente se prefiere la primera sintaxis, ya que la estrella `*` denota que es una función generadora, describe el tipo, no el nombre, por lo que debe atenerse a la palabra clave `function`.
 ```
 
 ## Generators are iterable
 
-As you probably already guessed looking at the `next()` method, generators are [iterable](info:iterable).
+Como ya habrán adivinado al ver el método `next()`, los generadores son [iterable](info:iterable).
 
-We can get loop over values by `for..of`:
+Podemos obtener valores de bucle por `for..of`:
 
 ```js run
 function* generateSequence() {
@@ -114,9 +113,9 @@ for(let value of generator) {
 }
 ```
 
-That's a much better-looking way to work with generators than calling `.next().value`, right?
+Es una forma mucho más atractiva de trabajar con los generadores que llamar a `.next().value`, verdad?
 
-...But please note: the example above shows `1`, then `2`, and that's all. It doesn't show `3`!
+...Pero tenga en cuenta: el ejemplo anterior muestra `1`, y luego `2`, y eso es todo. No se muestra `3`!
 
 It's because for-of iteration ignores the last `value`, when `done: true`. So, if we want all results to be shown by `for..of`, we must return them with `yield`:
 
