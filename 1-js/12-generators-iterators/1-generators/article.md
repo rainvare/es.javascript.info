@@ -23,7 +23,7 @@ Cuando `generateSequence()` se llama, no ejecuta el código. En su lugar, devuel
 
 ```js
 // La "función generadora" crea el "objeto generador"
-let generator = generateSequence();
+let generator = generateSequence(); 
 ```
 
 El objeto `generator` puede ser percibido como una "llamada de función congelada":
